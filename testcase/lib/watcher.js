@@ -1,36 +1,40 @@
-function watcher(){};
-watcher.watchQueue=[];
-watcher.intervalTime=100;
+/**
+* Author: Major
+* Date: 11/30 2011
+*/
+if (!window.watcher) window.watcher = {};
+(function(w) {
+
+w.watchQueue=[];
+
 /**
 * @value {JSON} {attribute:attr,viewModel:viewModel,fct:fct,callback:callback}
 */
-watcher.addWatchTarget=function(obj){
-  watcher.watchQueue.push(obj);
-}
+w.addWatchTarget=function(obj){
+  this.watchQueue.push(obj);
+};
 
-watcher.removeWatchTarget=function(key){
+w.removeWatchTarget=function(key){
   //todo
-}
-watcher.startWatch=function(){
-  if(!this.intervalId){
-    this.intervalId=setInterval(function(){
-		  for(var i=0;i<watcher.watchQueue.length;i++){
-			var obj=watcher.watchQueue[i];
-			setTimeout(function(){
-			  watcher.playback(obj);
-			},0);
-		  }
-	},watcher.intervalTime);
-  }
-}
+};
 
-watcher.stopWatch=function(){
-  if(this.intervalId){
-    window.clearInterval(this.intervalId);
+w.startWatch=function(){
+  for(var i=0;i<w.watchQueue.length;i++){
+	var obj=w.watchQueue[i];
+	  w.playback(obj);
+  }
+  if(this.timeoutId) window.clearTimeout(this.timeoutId);
+  this.timeoutId=window.setTimeout(w.startWatch,0);
+};
+
+//use set time, currently could not stop watch, bug or not?
+w.stopWatch=function(){
+  if(this.timeoutId){
+    window.clearTimeout(this.timeoutId);
   }
 };
 
-watcher.playback=function(playbackObj){
+w.playback=function(playbackObj){
  var p=playbackObj;
  var attribute=p.attribute;
  var viewModel=p.viewModel;
@@ -39,18 +43,20 @@ watcher.playback=function(playbackObj){
  if(fct.apply(viewModel,[attribute])){
    callback();
  }
-}
+};
 
 // how to delete watch target? 
 // use UID as store key?
 // how to watch object which has too much level?
-watcher.watchUtil=function(attr,viewModel,fct){
+w.watchUtil=function(attr,viewModel,fct){
    return {
      'do':function(f){
-	   watcher.addWatchTarget({attribute:attr,viewModel:viewModel,fct:fct,callback:f});
+	   w.addWatchTarget({attribute:attr,viewModel:viewModel,fct:fct,callback:f});
 	   if(fct.apply(viewModel,[attr])){
 	     f();
 	   }
 	 }
    };
-}
+};
+
+})(watcher);
