@@ -1,0 +1,32 @@
+1:  PURPOSE
+	use the event loop idea, to monitor the data change, currently in front-end world, we get the data from 
+	the back-end ,and show the data , if data change , we need do some action, so the purpose is : design a data
+	driven framework. the watcher.js is the test for that .
+
+2:  HOW TO USE IT?
+	in the Observer.js, we have the viewModel (which come from the MVVM), so :
+	
+	//user view Model
+	var myviewModel={
+	targetAttr:¡®some value¡¯
+	};
+	
+	//start watch
+	watcher.startWatch();
+	
+	watcher.watchUtil(¡®targetAttr¡¯,myviewModel,function(){
+	   // this is the user define function, this function will check whether the targetAttr value change
+	   return true/false;
+	}).do(function(){
+	  //if data change, do some action
+	});
+
+3:  Bugs.
+    watcher.stopWatch() do not work
+	
+4:  TODO:
+    a: will implement removeWatchTarget method
+	b: add test report under IE6/7
+	c: consider the complex senario
+	d: consider the dependance between watcher, avoid the endless loop
+   
