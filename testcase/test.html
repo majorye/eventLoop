@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <link href="css/reset.css" rel="stylesheet" type="text/css" />
+<script type='text/javascript' src='lib/jquery.js'></script>
+<script type='text/javascript' src='lib/jquery.tmpl.js'></script>
+<script type='text/javascript' src='lib/observer.js'></script>
+<script type='text/javascript' src='lib/watcher.js'></script>
+<script>
+</script>
+<style type="text/css">
+</style>
+  </head>
+  <body>
+  <div id="header"></div>
+   <div id="content">
+     <p>FirstName: <input data-binding="value:firstName"/></p>
+     <p><span data-binding="text:firstName"/></p>
+	 <p><span data-binding="text:lastName"/></p>
+	 <button data-binding="click:doClick" >Click me</button>
+   </div>
+  </body>
+   <script type='text/javascript'>
+     var myviewModel={
+	   firstName: ob.observerable('Jill'),
+	   lastName:'Yang',
+	   doClick: function(){
+	     alert('click me');
+	   }
+	 };
+	 ob.applyBindings(myviewModel,document.getElementById('content'));
+	 watcher.startWatch();
+	 watcher.watchUtil("firstName",myviewModel,function(){
+		   if(!myviewModel.original){
+			 myviewModel.original={};
+			 ob.util.extend(myviewModel.original,myviewModel);
+		   }else{
+			 var isfun=ob.util.isFunction(myviewModel.firstName);
+			 if(isfun){
+			   return false;
+			 }
+			 isfun=ob.util.isFunction(myviewModel.original.firstName);
+			 if(isfun){
+			   myviewModel.original.firstName=myviewModel.original.firstName();
+			 }
+			 if(myviewModel.firstName!==myviewModel.original.firstName){
+				myviewModel.original.firstName=myviewModel.firstName;
+			   return true;
+			 }
+		   }
+		   return false;
+	 }).do(function(){
+	   console.info('data modified');
+	   alert('data modified');
+	 });
+  </script>
+</html>
