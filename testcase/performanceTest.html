@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+<script type='text/javascript' src='lib/jquery.js'></script>
+<script type='text/javascript' src='lib/jquery.tmpl.js'></script>
+<script type='text/javascript' src='lib/observer.js'></script>
+<script type='text/javascript' src='lib/watcher.js'></script>
+ </head>
+<body>
+  <div class="main">
+	  <div id="content" style="float:left;width:80%;border:solid 1px black;">
+	     
+	  </div>
+	  <div id="console" style="float:left;width:15%;border:solid 1px grey;margin-left:4px;">
+	  </div>
+  </div>
+  <!-- create the target element -->
+  <script type='text/javascript'>
+    var container=document.getElementById("content");
+	var totalNumber=10000;
+	//var template='<input type="text" id="${id}" value="${value}"/>';
+	var obj={};
+	var templatePool=[];
+	for(var i=0;i<totalNumber;i++){
+	  obj[i]={'id':i,'value':i};
+	  if(i<10000){
+	    templatePool.push('<input type="text" id="'+i+'" value="'+i+'"/>');
+	  }
+	  watcher.watchUtil("value",obj[i],function(){
+	    var viewModel=arguments[0];
+		var attr=arguments[1];
+		var tObj=document.getElementById(viewModel.id);
+		var newValue;
+		if(tObj){
+		 newValue=document.getElementById(viewModel.id).value;
+		}
+		if(newValue!==viewModel.value){
+		  viewModel.value=newValue;
+		  return true;
+		}
+		return false;
+	  }).do(function(){
+	     var viewModel=arguments[0];
+		 var msg="element id:"+viewModel.id+" value change.";
+		 console.info(msg);
+		 /*var consoleObj=document.getElementById("console");
+		 if(!consoleObj){
+           consoleObj.innerHTML=msg;
+		 }*/
+	  });
+	}
+	container.innerHTML=templatePool.join('');// render
+	watcher.startWatch();
+	//do the binding
+	/**
+	*  todo
+	*/
+	function doBinding(){
+	  
+	}
+  </script>
+</body>
+</html>
